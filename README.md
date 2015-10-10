@@ -46,8 +46,8 @@ To build Browser functionality like this documentation
 * Paragraphs
 * Links \[\]\(\)
 * Images !\[\]\(\)
-* Inline <em> emphasis \*
-* Inline <strong> emphasis \*\*
+* Inline `<em>` emphasis \*
+* Inline `<strong>` emphasis \*\*
 * Escaping of Markdown characters
 * Nesting lists and styles in block, links and paragraph
 
