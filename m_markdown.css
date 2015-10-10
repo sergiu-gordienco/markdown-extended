@@ -1,0 +1,135 @@
+
+.markdown-code i,
+.markdown-code em,
+.markdown-code var,
+.markdown-code address {
+	font-style	: italic;
+}
+.markdown-code b,
+.markdown-code strong {
+	font-weight	: bold;
+}
+.markdown-code {
+	background-color: #FFF;
+	color: #333;
+	font: 13px Helvetica, arial, freesans, clean, sans-serif;
+	word-wrap: break-word;
+	line-height: 1.7;
+	padding: 5px 20px 15px 20px;
+	-webkit-font-smoothing: antialiased;
+
+	display		: block;
+	text-align	: left;
+	float		: initial;
+	clear		: initial;
+	
+	border-radius	: 3px;
+	-webkit-border-radius	: 3px;
+	-moz-border-radius	: 3px;
+	-ms-border-radius	: 3px;
+	-o-border-radius	: 3px;
+}
+.markdown-code a {
+	font-weight	: bold; 
+	color: #4183c4;
+	text-decoration: none;
+}
+.markdown-code a:hover {
+	text-decoration: underline;
+}
+.markdown-code p,
+.markdown-code blockquote,
+.markdown-code ul,
+.markdown-code ol,
+.markdown-code dl,
+.markdown-code table,
+.markdown-code pre {
+	margin: 15px 0;
+	white-space: pre-wrap;
+}
+
+.markdown-code p {
+	text-indent	: 0;
+}
+
+.markdown-code p::before {
+	content	: '       ';
+	white-space	: 'pre-wrap';
+}
+
+.markdown-code ul, .markdown-code ol {
+	padding-left: 30px;
+}
+.markdown-code ul ul, .markdown-code ol ol,
+.markdown-code ul ol, .markdown-code ol ul {
+	margin	: 7px 0;
+}
+.markdown-code h1 {
+	border-bottom: 1px solid #ddd;
+	color: #000;
+	font-size: 2.5em;
+}
+.markdown-code h2 {
+	border-bottom: 1px solid #eee;
+	color: #000;
+	font-size: 2.0em;
+}
+.markdown-code h3 {
+	font-size: 1.5em;
+}
+.markdown-code h4 {
+	font-size: 1.2em;
+}
+.markdown-code h5 {
+	font-size: 1.0em;
+}
+.markdown-code h6 {
+	color: #777;
+	font-size: 1.0em;
+}
+.markdown-code h1,
+.markdown-code h2,
+.markdown-code h3,
+.markdown-code h4,
+.markdown-code h5,
+.markdown-code h6 {
+	font-weight: bold;
+	line-height: 1.7;
+	margin: 1em 0 15px 0;
+	padding: 0;
+}
+.markdown-code h1 + p, .markdown-code h2 + p, .markdown-code h3 + p {
+	margin-top: 10px;
+}
+.markdown-code code {
+	background-color: #F8F8F8;
+	border-radius: 3px;
+	border: 1px solid #DDD;
+	font-family: Consolas, "Liberation Mono", Courier, monospace;
+	font-size: 12px;
+	margin: 0 2px;
+	padding: 0 5px;
+	white-space: pre-wrap;
+}
+
+.markdown-code code[lang] {
+	position	: relative;
+	margin-top	: 23px;
+	border-radius	: 0 3px 3px 3px;
+}
+
+.markdown-code code[lang]:before {
+	content	: "Syntax: " attr(lang);
+	position: absolute;
+	left	: -1;
+	bottom	: 100%;
+	background	: #dedede;
+	border-radius	: 5px 5px 0 0;
+	color	: #232323;
+	padding	: 0 5px;
+	font-size	: 11px;
+}
+
+.markdown-code pre > code {
+	display	: block;
+}

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+		<title>Browser MD Example</title>
+		<meta name="author" content="Sergiu Gordienco Vasile">
+	</head>
+	<body>
+
+		<link rel="stylesheet" href="./libs/hljs.css">
+		<script src="./libs/hljs.js"></script>
+
+		<link rel="stylesheet" href="./m_markdown.css" />
+		<script type="text/javascript" src="./m_markdown.js"></script>
+		<script type="text/javascript" src="./libs/m_urlcapture.js"></script>
+		<script type="text/javascript" src="./libs/m_urlload.js"></script>
+
+		<div class="m-markdown-browser-example"></div>
+		<script type="text/javascript">
+			var browser    = m_markdown.setBrowser({
+				// force to load an url
+				url        : "markdown-docs/index.md",
+				// base    : "http://my-site.com/markdown-docs/",
+				// base    : "markdown-docs/",
+				base    : "./",
+				node    : document.querySelector('.m-markdown-browser-example')
+			}, function (eventName, methods) {
+				if (eventName === "init") {
+				    window.browser    = methods;
+				}
+			});
+		</script>
+	</body>
+</html>
