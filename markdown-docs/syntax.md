@@ -79,11 +79,11 @@ Goto: [Index](/), [Top](#nav-top)
 
 ### Adding inline code sections
 
-1. Adding simple inline code, example: `inline-code` with `\`inline-code\``
-2. Adding simple row code, example: ``example of row code`` with `\`\`example of row code\`\``
+1. Adding simple inline code, example: `inline-code` with \`inline-code\`
+2. Adding simple row code, example: ``example of row code`` with \`\`example of row code\`\`
 3. Adding set on rows of code, example:
 
-### Adding code section using `\`\`\``
+### Adding code section using \`\`\`
 
 Currenty we added a code with **CSS** syntax, but supported syntaxes are: **clike** - C-like ( CPP, C# ); **clojure**; **coffeescript**; **css**; **diff** - Git language ( mode : diff ); **ecl**; **erlang**; **gfm**; **go**; **groovy**; **haskell**; **haxe**; **htmlembedded**; **htmlmixed** - html; **javascript**; **jinja2**; **less**; **lua**; **markdown**; **mysql**; **ntriples**; **ocaml**; **pascal**; **perl**; **php**; **pig**; **plsql**; **properties**; **python**; **r**; **rpm**; **rst**; **ruby**; **rust**; **scheme**; **shell** - shell, bash, sh; **sieve**; **smalltalk**; **smarty**; **sparql**; **stex**; **tiddlywiki**; **tiki**; **vb**; **vbscript**; **velocity**; **verilog**; **xml**; **xquery**; **yaml**; **text**.
 
