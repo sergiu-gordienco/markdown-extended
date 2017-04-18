@@ -22,7 +22,7 @@
 	text-align	: left;
 	float		: initial;
 	clear		: initial;
-	
+
 	border-radius	: 3px;
 	-webkit-border-radius	: 3px;
 	-moz-border-radius	: 3px;
@@ -30,7 +30,7 @@
 	-o-border-radius	: 3px;
 }
 .markdown-code a {
-	font-weight	: bold; 
+	font-weight	: bold;
 	color: #4183c4;
 	text-decoration: none;
 }
@@ -46,6 +46,16 @@
 .markdown-code pre {
 	margin: 15px 0;
 	white-space: pre-wrap;
+}
+
+.markdown-code blockquote {
+	border: 1px dashed rgba(128, 128, 128, 0.5);
+	border-left: 3px solid rgba(128, 128, 128, 0.5);
+	padding: 5px 15px 5px 25px;
+
+	background: rgba(128, 128, 128, 0.15);
+
+	color: #777;
 }
 
 .markdown-code p {

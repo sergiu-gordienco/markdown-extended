@@ -9,6 +9,16 @@
 // │ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/3.0/.      │ \\
 // └───────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
+// jshint -W002
+// jshint -W014
+// jshint -W032
+// jshint -W043
+// jshint -W049
+// jshint -W061
+// jshint -W083
+// jshint -W084
+// jshint -W086
+
 ;((function () {
 	if (!String.prototype.subs) {
 		String.prototype.subs	= function(p,i){
@@ -17,22 +27,22 @@
 			if(!i)	return this.substring(0,p);
 			return this.substring(p,p+i);
 		};
-	};
+	}
 	if (!String.prototype.escape) {
-		String.prototype.escape		= function() { return escape(this); }
-	};
+		String.prototype.escape		= function() { return escape(this); };
+	}
 	if (!String.prototype.encodeURI) {
-		String.prototype.encodeURI	= function() { return encodeURIComponent(this); }
-	};
+		String.prototype.encodeURI	= function() { return encodeURIComponent(this); };
+	}
 	if (!String.prototype.unescape) {
-		String.prototype.unescape	= function() { return unescape(this); }
-	};
+		String.prototype.unescape	= function() { return unescape(this); };
+	}
 	if (!String.prototype.decodeURI) {
-		String.prototype.decodeURI	= function() { return decodeURIComponent(this); }
-	};
+		String.prototype.decodeURI	= function() { return decodeURIComponent(this); };
+	}
 	if (!String.prototype.escapeHex) {
-		String.prototype.escapeHex	= function() { return escape(this).replace(/\%u/g,'\\u').replace(/\%/g,'\\x') };
-	};
+		String.prototype.escapeHex	= function() { return escape(this).replace(/\%u/g,'\\u').replace(/\%/g,'\\x'); };
+	}
 	if (!String.prototype.parseUrl) {
 		String.prototype.parseUrlVars	= function(json,params) {
 			if(!params) params = {
@@ -60,7 +70,7 @@
 								a.push(y[2]);
 							} else {
 								a.push( y[2] || y[3] );
-							};
+							}
 						};
 						a = a.map(function(v) { if((""+v).match(/[^0-9]/))return '"'+(""+v).escapeHex()+'"'; return ""+v; });
 						a.forEach(function(k,i,ar){
@@ -141,11 +151,44 @@
 			}
 		}
 		var s = this;var h='';
+
+		var definitions = {};
+
+		((function () {
+			// read definitions in definition
+			var rule = /(^|\n)\[[^\n\]\[]+\]\:\s*[^\n]+/gi;
+			var matches = s.match(rule);
+			if (Array.isArray(matches)) {
+				matches.forEach(function (m) {
+					s = s.replace(m, (m[0] === '\n' ? '\n' : ''));
+					var name = m.match(/(^|\n)\[([^\n\]\[]+)\]\:/);
+
+					if (!name) return;
+
+					name = name[2];
+
+					var params = ((m.replace(/.*?\:/, '') + " ").match(/(\".*?\"\s|\(.*?\)|\S+)/g) || [])
+						.map(function (param) {
+							if (param.match(/^(\"|\')(.*)\1$/)) {
+								param = param.replace(/^(\"|\')(.*)\1$/, '$2');
+							} else if (param.match(/^(\()(.*)(\))$/)) {
+								param = param.replace(/^(\()(.*)(\))$/, '$2');
+							}
+							return param;
+						});
+					definitions[name] = params;
+				});
+			}
+		})());
+
+		console.log(definitions);
+
 		function E(s){return escape(s + "").replace(/\%u([0-9a-f]{4})/gi,'&#x$1;').replace(/\%([0-9a-f]{2})/gi,'&#x$1;')
 				.replace(/\&\#x20\;/gi,' ')
 				.replace(/\&\#x5f\;/gi,'_')
 				.replace(/\&\#x7e\;/gi,'~')
 				.replace(/\&\#x23\;/gi,'#')
+				.replace(/\&\#x26\;/gi,'&')
 				.replace(/\&\#x2a\;/gi,'*')
 				.replace(/\&\#x5b\;/gi,'[')
 				.replace(/\&\#x5d\;/gi,']')
@@ -164,9 +207,9 @@
 				.replace(/\&\#x28\;/gi,'(')
 				.replace(/\&\#x29\;/gi,')')
 				.replace(/\&\#x25\;/gi,'%')
-				.replace(/\&\#x02\;/gi,'\x02')
+				.replace(/\&\#x02\;/gi,'\x02');
 		}
-		
+
 		function I(s){
 			var nodes	= {};
 			var node_k	= 0;
@@ -202,7 +245,7 @@
 						nodes[node_k]	= data;
 					}
 				}
-			}
+			};
 			var f_apply	= function () {
 				var m	= null;
 				var l	= 237;
@@ -213,10 +256,10 @@
 							return nodes[s1] || "";
 						}
 						return '';
-					})
+					});
 				}
-			}
-			
+			};
+
 			s	= E(s);
 			f_match("\x5c\x5c","\x5c");
 			f_match("\x5c`","`");
@@ -228,17 +271,25 @@
 			f_match("\x5c*","*");
 			f_match("\x5c~","~");
 			f_match("\x5c&","&");
-			
+
 			f_match(/```([a-z\-0-9\.\/])\n([\s\S]+?)```/g,'<pre class="language-$1"><code lang="$1">$2</code></pre>');
 			f_match(/``([\s\S]+?)``/g,'<pre><code>$1</code></pre>');
 			f_match(/`([^`]+)`/g,'<code>$1</code>');
-			
-			
-			f_match(/\!image\-(\d+\%{0,1})x(\d+\%{0,1})\[([^\]]*)]\(([^(]+)\)/g,'<img width="$1" height="$2" src="$4" title="$3" />');
-			f_match(/\!\[([^\]]*)]\(([^(]+)\)/g, function (s0, s1, s2) {
-				return "<img src=\""+E(s2)+"\" title=\""+E(s1)+"\" alt=\""+E(s1)+"\">";
+
+
+			f_match(/\!image\-(\d+\%{0,1}|auto|\d+vw|\d+vh|\d+vmin|\d+vmax|\d+em|\d+pt|\d+px|)x(\d+\%{0,1}|auto|\d+vw|\d+vh|\d+vmin|\d+vmax|\d+em|\d+pt|\d+px|)\[([^\]]*)]\(([^(]+)\)/g, function (s0, s1, s2, s3, s4) {
+				if (s1.match(/^\d+$/)) {
+					s1 += 'px';
+				}
+				if (s2.match(/^\d+$/)) {
+					s2 += 'px';
+				}
+				return '<img style="width: ' + (s1) + '; height:'+ (s2) + ';" src="'+E(s4)+'" title="'+E(s3)+'" />';
 			});
-			
+			f_match(/\!\[([^\]]*)]\(([^(]+)\)/g, function (s0, s1, s2) {
+				return "<img src=\""+E(s2)+"\" title=\""+E(s1)+"\" alt=\""+E(s1)+"\" style=\"max-width: 100%; height: auto;\">";
+			});
+
 			f_match(/\!object\-(\d+\%{0,1})x(\d+\%{0,1})\[([^\]]*)]\(([^(]+)\)/g,'<object width="$1" height="$2" src="$4">$3</object>');
 			f_match(/\!iframe\-(\d+\%{0,1})x(\d+\%{0,1})\[([^\]]*)]\(([^(]+)\)/g,'<iframe width="$1" height="$2" src="$4">$3</iframe>');
 			f_match(/\!video\-(\d+\%{0,1})x(\d+\%{0,1})\[([^\]]*)]\(([^(]+)\)/g, function (match, s1, s2, s3, s4) {
@@ -259,7 +310,56 @@
 			f_match(/\[([^\]]+)]\(([^(]+)\)/g, function (s0, s1, s2) {
 				return "<a href=\""+E(s2)+"\">"+I(s1)+"</a>";
 			});
-			
+
+
+			f_match(/\!image\-(\d+\%{0,1}|auto|\d+vw|\d+vh|\d+vmin|\d+vmax|\d+em|\d+pt|\d+px|)x(\d+\%{0,1}|auto|\d+vw|\d+vh|\d+vmin|\d+vmax|\d+em|\d+pt|\d+px|)\[([^\]]*)]\[([^\[\]]+)\]/g, function (s0, s1, s2, s3, s4) {
+				if (s1.match(/^\d+$/)) {
+					s1 += 'px';
+				}
+				if (s2.match(/^\d+$/)) {
+					s2 += 'px';
+				}
+				var definition = definitions[s4] || [];
+				return '<img style="width: ' + (s1 || definition[2] || 'auto') + '; height:'+ (s2 || definition[3] || 'auto') + ';" src="'+E(definition[0] || '')+'" title="'+E(s3 || definition[1] || '')+'" />';
+			});
+			f_match(/\!\[([^\]]*)]\[([^\[\]]+)\]/g, function (s0, s1, s2) {
+				var definition = definitions[s2] || [];
+				return "<img src=\""+E(definition[0] || '')+"\" title=\""+E(s1 || definition[1] || '')+"\" alt=\""+E(s1 || definition[1] || '')+"\" style=\"max-width: 100%; height: auto;\">";
+			});
+
+			f_match(/\!object\-(\d+\%{0,1}|auto|\d+vw|\d+vh|\d+vmin|\d+vmax|\d+em|\d+pt|\d+px|)x(\d+\%{0,1}|auto|\d+vw|\d+vh|\d+vmin|\d+vmax|\d+em|\d+pt|\d+px|)\[([^\]]*)]\[([^\[\]]+)\]/g, function (s0, s1, s2, s3, s4) {
+				var definition = definitions[s4] || [];
+				return '<object width="'+E(s1 || definition[2] || '')+'" height="'+E(s2 || definition[3] || '')+'" src="'+E(definition[0] || '')+'">'+E(s3 || definition[1] || '')+'</object>';
+			});
+			f_match(/\!iframe\-(\d+\%{0,1})x(\d+\%{0,1})\[([^\]]*)]\[([^\[\]]+)\]/g, function (s0, s1, s2, s3, s4) {
+				var definition = definitions[s4] || [];
+				return '<iframe width="'+E(s1 || definition[2] || '')+'" height="'+E(s2 || definition[3] || '')+'" src="'+E(definition[0] || '')+'">'+E(s3 || definition[1] || '')+'</iframe>';
+			});
+			// f_match(/\!video\-(\d+\%{0,1})x(\d+\%{0,1})\[([^\]]*)]\(([^(]+)\)/g, function (match, s1, s2, s3, s4) {
+			// 	return '<video width="'+s1+'" height="'+s2+'" controls>'+(s4 + '').split(';').filter(function (v) { return v.length; }).map(function (s) { return '<source src="'+E(s).replace('#','" type="')+'">';}).join("")+''+I(s3)+'</video>';
+			// });
+			// f_match(/!audio\[([^\]]*)]\(([^(]+)\)/g, function (match, s3, s4) {
+			// 	return '<audio controls>'+(s4 + '').split(';').filter(function (v) { return v.length; }).map(function (s) { return '<source src="'+E(s).replace('#','" type="')+'">';}).join("")+''+I(s3)+'</audio>';
+			// });
+			f_match(/\[([^\]]*)]\[([^\[\]]+)\]\[blank\]/g, function (s0, s1, s2) {
+				var definition = definitions[s2] || [];
+				return "<a href=\""+E(definition[0] || '')+"\" target=\"_blank\">"+I(s1 || definition[1] || '')+"</a>";
+			});
+			f_match(/\[([^\]]*)]\[([^\[\]]+)\]\[download\=([^\]]*)\]/g, function (s0, s1, s2, s3) {
+				var definition = definitions[s2] || [];
+				return "<a href=\""+E(definition[0] || '')+"\" download=\""+E(s3 || definition[2] || 'file')+"\">"+I(s1 || definition[1] || '')+"</a>";
+			});
+			f_match(/\[([^\]]*)]\[([^\[\]]+)\]\[([^\]\[]*)\]/g, function (s0, s1, s2, s3) {
+				var definition = definitions[s2] || [];
+				return "<a href=\""+E(definition[0] || '')+"\" name=\""+E(s3 || definition[2] || '')+"\">"+I(s1 || definition[1] || '')+"</a>";
+			});
+			f_match(/\[([^\]]*)]\[([^\[\]]+)\]/g, function (s0, s1, s2) {
+				var definition = definitions[s2] || [];
+				return "<a href=\""+E(definition[0] || '')+"\">"+I(definition[1] || '')+"</a>";
+			});
+
+
+
 			f_match(/(\_\_\_)([^\<\>]+?)\1/g, function (s0, s1, s2) {
 				return '<u>'+I(s2)+'</u>';
 			});
@@ -272,9 +372,9 @@
 			f_match(/(\~)([^\<\>]+?)\1/g, function (s0, s1, s2) {
 				return '<s>'+I(s2)+'</s>';
 			});
-			
+
 			f_apply();
-			
+
 			return s;
 		}
 		s
@@ -287,17 +387,17 @@
 				h += '<pre class="language-'+lang+'"><code lang="'+lang+'">'+E(s.join('\n'))+'</code></pre>';
 			} else {
 				var statuses	= {
-					'p'    : function () { return { type: 'p', indent : 1, rows: [] } },
-					'code' : function () { return { type: 'code', rows: [] } },
-					'ul'   : function () { return { type: 'ul', style: '*', items : [] } },
-					'ol'   : function () { return { type: 'ol', style: 'number', items : [] } },
-					'quote': function () { return { type: 'quote', rows: [] } },
-					'h1'   : function () { return { type: 'h1', rows: [] } },
-					'h2'   : function () { return { type: 'h2', rows: [] } },
-					'h3'   : function () { return { type: 'h3', rows: [] } },
-					'h4'   : function () { return { type: 'h4', rows: [] } },
-					'h5'   : function () { return { type: 'h5', rows: [] } },
-					'h6'   : function () { return { type: 'h6', rows: [] } }
+					'p'    : function () { return { type: 'p', indent : 1, rows: [] }; },
+					'code' : function () { return { type: 'code', rows: [] }; },
+					'ul'   : function () { return { type: 'ul', style: '*', items : [] }; },
+					'ol'   : function () { return { type: 'ol', style: 'number', items : [] }; },
+					'quote': function () { return { type: 'quote', rows: [] }; },
+					'h1'   : function () { return { type: 'h1', rows: [] }; },
+					'h2'   : function () { return { type: 'h2', rows: [] }; },
+					'h3'   : function () { return { type: 'h3', rows: [] }; },
+					'h4'   : function () { return { type: 'h4', rows: [] }; },
+					'h5'   : function () { return { type: 'h5', rows: [] }; },
+					'h6'   : function () { return { type: 'h6', rows: [] }; }
 				};
 				var data	= [];
 				var current	= statuses.p();
@@ -324,7 +424,7 @@
 						status	= 'p';
 					}
 					if (['p','quote','h1','h2','h3','h4','h5','h6'].indexOf(status) !== -1 && line.match(/^\040\040\040\040/)) {
-						status	= 'code'
+						status	= 'code';
 					}
 					if (current.type !== status) {
 						data.push(current);
@@ -360,7 +460,7 @@
 							}
 							if (m) {
 								if (current.items.length) {
-									current.items[current.items.length - 1].row	= (current.items[current.items.length - 1].row || '') + "\n" + line.replace(/^\s*/,'')
+									current.items[current.items.length - 1].row	= (current.items[current.items.length - 1].row || '') + "\n" + line.replace(/^\s*/,'');
 								} else {
 									current.items.push({
 										level	: Math.ceil((line.match(/^\040+/) || [''])[0].length / 4),
@@ -377,7 +477,7 @@
 					}
 				});
 				if (current.type) {
-					data.push(current)
+					data.push(current);
 				}
 				// console.log(data);
 				if (data.length) {
@@ -388,23 +488,23 @@
 				}
 				h += data.map(function (node) {
 					if (node.type === 'h1') {
-						return '<h1>'+I(node.rows.join('\n'))+'</h1>'
+						return '<h1>'+I(node.rows.join('\n'))+'</h1>';
 					} else if (node.type === 'h2') {
-						return '<h2>'+I(node.rows.join('\n'))+'</h2>'
+						return '<h2>'+I(node.rows.join('\n'))+'</h2>';
 					} else if (node.type === 'h3') {
-						return '<h3>'+I(node.rows.join('\n'))+'</h3>'
+						return '<h3>'+I(node.rows.join('\n'))+'</h3>';
 					} else if (node.type === 'h4') {
-						return '<h4>'+I(node.rows.join('\n'))+'</h4>'
+						return '<h4>'+I(node.rows.join('\n'))+'</h4>';
 					} else if (node.type === 'h5') {
-						return '<h5>'+I(node.rows.join('\n'))+'</h5>'
+						return '<h5>'+I(node.rows.join('\n'))+'</h5>';
 					} else if (node.type === 'h6') {
-						return '<h6>'+I(node.rows.join('\n'))+'</h6>'
+						return '<h6>'+I(node.rows.join('\n'))+'</h6>';
 					} else if (node.type === 'p') {
-						return '<p>'+I(node.rows.join('\n').replace(/^\n+/,'').replace(/\n+$/,''))+'</p>'
+						return '<p>'+I(node.rows.join('\n').replace(/^\n+/,'').replace(/\n+$/,''))+'</p>';
 					} else if (node.type === 'quote') {
-						return '<blockquote>'+I(node.rows.join('\n').replace(/^\n+/,'').replace(/\n+$/,''))+'</blockquote>'
+						return '<blockquote>'+I(node.rows.join('\n').replace(/^\n+/,'').replace(/\n+$/,''))+'</blockquote>';
 					} else if (node.type === 'code') {
-						return '<pre><code>'+node.rows.join('\n')+'</code></pre>'
+						return '<pre><code>'+node.rows.join('\n')+'</code></pre>';
 					} else if (['ol', 'ul'].indexOf(node.type) != -1) {
 						var code	= [];
 						var index	= -1;
@@ -457,14 +557,14 @@
 			if (!("highlightBlockNumbers" in hljs)) {
 				hljs.highlightBlockNumbers	= hljs.highlightBlock;
 			}
-		})
+		});
 	} else {
 		if (window.hljs) {
 			if (!("highlightBlockNumbers" in hljs)) {
 				hljs.highlightBlockNumbers	= hljs.highlightBlock;
 			}
 		}
-	
+
 		window.loadObj	= function (l, f, v) {
 			(f)(v || {});
 		};
@@ -531,12 +631,14 @@
 							link	= (node.getAttribute("href") || "");
 							if (link[0] === '/') {
 								link	= base + link.replace(/^[\s\S]/,'');
-							} else if (!link.match(/^(\x23|data\:|((http|https|ftp|call|mailto|sftp|ws|wss)\:|)\/\/)/)){
-								link	= currentUrl.replace(/[^\/]+$/,'')+ link;
-								tmp	= link.replace(/(\/[^\/]+\/\.\.\/|\/.\/)/gi, '/').replace(/([^\:])\/\//gi, '$1/');
-								while (tmp !== link) {
-									link	= tmp;
+							} else {
+								if (!link.match(/^(\x23|data\:|((http|https|ftp|call|mailto|sftp|ws|wss)\:|\/\/))/)){
+									link	= currentUrl.replace(/[^\/]+$/,'')+ link;
 									tmp	= link.replace(/(\/[^\/]+\/\.\.\/|\/.\/)/gi, '/').replace(/([^\:])\/\//gi, '$1/');
+									while (tmp !== link) {
+										link	= tmp;
+										tmp	= link.replace(/(\/[^\/]+\/\.\.\/|\/.\/)/gi, '/').replace(/([^\:])\/\//gi, '$1/');
+									}
 								}
 							}
 							if (!node.getAttribute("download") && node.getAttribute("target") != "_blank" && !link.match(/^(\#|data\:)/)) {
@@ -549,7 +651,7 @@
 										(document.querySelector('a[name="'+this.getAttribute('href').replace(/^\x23/,'')+'"]') || { focus: function () {}}).focus();
 									} catch(e) {};
 									return false;
-								}
+								};
 							}
 							node.setAttribute("href", link);
 						};
@@ -625,10 +727,13 @@
 											};
 											return textUnicodeCache;
 										};
+
+										var container;
+
 										if ([0, 400, 404, 500, 501, 505].indexOf(link.status) == -1) {
 											var extension	= url.substr(url.lastIndexOf('.') + 1, url.length).toLowerCase();
 											var syntax_mode	= false;
-											var container	= _methods.node();
+											container	= _methods.node();
 											if (text === null || text === "" || text.length == 0) {
 												container.innerHTML	= '';
 												container.appendChild(m_markdown.encode("# Viewing an empty file\n\n-- **Path** : ["+fullUrl+"]("+fullUrl+")\n\n*sorry, but file is empty* you can try to open [Index](/)\n", true));
@@ -688,17 +793,17 @@
 												break;
 											}
 										} else {
-											var container	= _methods.node();
+											container	= _methods.node();
 											container.innerHTML	= '';
 											container.appendChild(m_markdown.encode("# Loading error ( "+link.status+" )\n\nUrl: ["+fullUrl+"]("+fullUrl+")[blank]\n\nResponse Status: "+link.status+" ; "+(link.statusText || ""), true));
 											_methods.updateLinks(url);
 										}
 									}, {}, false, false, false, "get", "binary");
-								}
+								};
 								_config.urlController.set("actions", actionsUpdate);
 								_config.urlController.ifNoAction	= function () {
 									_config.urlController.onUrlDiff(false, _config.controllerName, _config.actionName, []);
-								}
+								};
 							}
 							if (controller_started) {
 								_config.urlController.start();
@@ -717,7 +822,7 @@
 						var params	= ((url || "")+"").split("/").map(function (s) {
 							return s.decodeURI();
 						});
-						var urlResult	= 
+						var urlResult	=
 							document.location.href.split('#')[0].split(_config.urlController.urlSpliter)[0]
 							+ _config.urlController.urlSpliter
 							+ _config.controllerName + "/"
@@ -753,7 +858,7 @@
 						if (!_config.init) {
 							_config.init	= true;
 							_methods.urlController(true);
-							
+
 							if (typeof(_config.url) === "string" && _config.url.length)
 								_methods.url(_config.url);
 						}
