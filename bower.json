@@ -1,0 +1,22 @@
+{
+  "name": "markdown-extended",
+  "homepage": "https://github.com/sergiu-gordienco/markdown-extended",
+  "authors": [
+    "Sergiu Gordienco <sergiu.gordienco@gmail.com>"
+  ],
+  "description": "JavaScript markdown renderer",
+  "main": "m_markdown.js",
+  "keywords": [
+    "markdown",
+    "md",
+    "javascript",
+    "html",
+    "renderer",
+    "exrented",
+    "include",
+    "video",
+    "html5",
+    "framework"
+  ],
+  "license": "MIT"
+}

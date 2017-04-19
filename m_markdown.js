@@ -741,6 +741,7 @@
 											switch(extension) {
 												case 'md':
 													container.innerHTML	= '';
+													debugger;
 													container.appendChild(m_markdown.encode(textUnicode() + "", true));
 													_methods.updateLinks(url);
 												break;
