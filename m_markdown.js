@@ -181,8 +181,6 @@
 			}
 		})());
 
-		console.log(definitions);
-
 		function E(s){return escape(s + "").replace(/\%u([0-9a-f]{4})/gi,'&#x$1;').replace(/\%([0-9a-f]{2})/gi,'&#x$1;')
 				.replace(/\&\#x20\;/gi,' ')
 				.replace(/\&\#x5f\;/gi,'_')
@@ -741,7 +739,6 @@
 											switch(extension) {
 												case 'md':
 													container.innerHTML	= '';
-													debugger;
 													container.appendChild(m_markdown.encode(textUnicode() + "", true));
 													_methods.updateLinks(url);
 												break;
