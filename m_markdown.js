@@ -181,6 +181,8 @@
 			}
 		})());
 
+		// console.log(definitions);
+
 		function E(s){return escape(s + "").replace(/\%u([0-9a-f]{4})/gi,'&#x$1;').replace(/\%([0-9a-f]{2})/gi,'&#x$1;')
 				.replace(/\&\#x20\;/gi,' ')
 				.replace(/\&\#x5f\;/gi,'_')
@@ -550,7 +552,7 @@
 		return h;
 	};
 	if ("newCss" in window) {
-		newCss(SITE_dURL()+"parts/gadget/m_markdown/m_markdown.css");
+		// newCss(SITE_dURL()+"parts/gadget/m_markdown/m_markdown.css");
 		loadObj('hljs', function () {
 			if (!("highlightBlockNumbers" in hljs)) {
 				hljs.highlightBlockNumbers	= hljs.highlightBlock;
@@ -627,10 +629,11 @@
 						for(i=0;i<list.length;i++) {
 							node	= list[i];
 							link	= (node.getAttribute("href") || "");
+
 							if (link[0] === '/') {
 								link	= base + link.replace(/^[\s\S]/,'');
 							} else {
-								if (!link.match(/^(\x23|data\:|((http|https|ftp|call|mailto|sftp|ws|wss)\:|\/\/))/)){
+								if (!link.match(/^(\x23|data\:|blob\:|web\:|((http|https|ftp|call|mailto|sftp|ws|wss)\:|\/\/))/)){
 									link	= currentUrl.replace(/[^\/]+$/,'')+ link;
 									tmp	= link.replace(/(\/[^\/]+\/\.\.\/|\/.\/)/gi, '/').replace(/([^\:])\/\//gi, '$1/');
 									while (tmp !== link) {
@@ -639,7 +642,7 @@
 									}
 								}
 							}
-							if (!node.getAttribute("download") && node.getAttribute("target") != "_blank" && !link.match(/^(\#|data\:)/)) {
+							if (!node.getAttribute("download") && node.getAttribute("target") != "_blank" && !link.match(/^(\#|data\:|blob\:|web\:)/)) {
 								link	= _methods.url(link, true);
 							}
 							if (link[0] === '#') {
@@ -651,6 +654,9 @@
 									return false;
 								};
 							}
+							if (link.match(/^web\:/)) {
+								link = link.replace(/^web\:/, '');
+							}
 							node.setAttribute("href", link);
 						};
 						list	= _methods.node().querySelectorAll('source,object,img,iframe');
@@ -659,13 +665,17 @@
 							link	= (node.getAttribute("src") || "");
 							if (link.subs(0, 1) === '/') {
 								link	= base + link.subs(1,0);
-							} else if (!link.match(/^(data\:|((http|https|ftp|call|mailto|sftp|ws|wss)\:|)\/\/)/)){
+							} else if (!link.match(/^(data\:|blob\:|web\:|((http|https|ftp|call|mailto|sftp|ws|wss)\:|)\/\/)/)){
 								link	= currentUrl.replace(/[^\/]+$/,'')+ link;
 								tmp	= link.replace(/(\/[^\/]+\/\.\.\/|\/.\/)/gi, '/');
 								while (tmp !== link) {
 									link	= tmp;
 									tmp	= link.replace(/(\/[^\/]+\/\.\.\/|\/.\/)/gi, '/');
 								}
+							}
+
+							if (link.match(/^web\:/)) {
+								link = link.replace(/^web\:/, '');
 							}
 							node.setAttribute("src", link);
 						};
