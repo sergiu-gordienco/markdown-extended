@@ -566,7 +566,28 @@
 		}
 
 		window.loadObj	= function (l, f, v) {
-			(f)(v || {});
+			var check = function () {
+				var loaded = true;
+				l.split(/[\s\,]+/).forEach(function (item) {
+					if (!(item in window)) {
+						loaded = false;
+					}
+				});
+
+				if (loaded) {
+					var err;
+					try {
+						clearTimeout(timer);
+					} catch (err) {
+						console.warn(err);
+					};
+					(f)(v || {});
+				}
+			};
+			var timer = setTimeout(function () {
+				check();
+			}, 100);
+			check();
 		};
 	}
 	var urlController	= false;
@@ -838,12 +859,16 @@
 							+ params.map(function (s) {
 								return (s + "").encodeURI();
 							}).join("/");
+
 						if (transform_only) {
+							debugger;
 							return urlResult;
 						} else {
 							if ((_config.urlController.urlHist[0] || "") === urlResult) {
+								debugger;
 								_config.urlController.urlHist[0].pop();
 							} else {
+								debugger;
 								_config.urlController.replaceUrl(urlResult);
 							}
 						}

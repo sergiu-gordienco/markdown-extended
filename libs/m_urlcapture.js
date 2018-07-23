@@ -78,7 +78,7 @@ window.m_urlcapture	= function(){
 									this.actions[i][j]	= v.data[i][j];
 								}
 							}
-						
+
 						break;
 					}
 				}
@@ -105,7 +105,7 @@ window.m_urlcapture	= function(){
 				return false;
 			}
 		}
-		
+
 		this.ifNoAction	= function(controller,action,param,data,app){
 			if(this.debug)
 				this.log("\tController: ",controller,"    Action: ",action);
@@ -155,7 +155,7 @@ window.m_urlcapture	= function(){
 			}
 			if(action == '')	action	= this.defAction;
 			if(controller == '')	controller	= this.defController;
-			
+
 			if(this.debug){
 				this.log('Execution: Controller: ',controller,' Action: ',action);
 			}
@@ -166,10 +166,10 @@ window.m_urlcapture	= function(){
 				} catch (e) {
 					this.log("Error: onUrlChange[",j,"] .. ",e);
 				}
-			
+
 				var no_act	= this.onUrlDiff_noSkip;
 				    no_act	= true;
-			
+
 			if(controller in this.actions){
 				if(action in this.actions[controller]){
 					(this.actions[controller][action])(
@@ -182,7 +182,7 @@ window.m_urlcapture	= function(){
 					no_act = false;
 				}
 			}
-			
+
 			for(j in this.afterUrlChange)
 				try {
 					(this.afterUrlChange[j])(controller,action,i.slice(2),data)
@@ -208,6 +208,7 @@ window.m_urlcapture	= function(){
 				last	= this.urlHist[this.urlHist.length-1];
 			};
 			var url	= document.location.href;
+
 			if(last != url){
 				this.urlHist.push(url);
 				if(this.urlHist.length > this.urlHist_maxLength)	this.urlHist.shift();
@@ -215,7 +216,7 @@ window.m_urlcapture	= function(){
 				this.onUrlDiff(url,last);
 			}
 		};
-		
+
 		this.parseUrl	= function(url){
 			var j,i = url.split(this.urlSpliter);
 			i.shift();i = i.join(this.urlSpliter).split('/');
@@ -226,7 +227,7 @@ window.m_urlcapture	= function(){
 				params		: i
 			}
 		};
-		
+
 		// creating timer sinaps
 		this.timer	= false;
 		this.start	= function(){
@@ -243,16 +244,25 @@ window.m_urlcapture	= function(){
 					r = m[3];
 					p = m[1];
 				};
-				if( r.length && "replaceState" in window.history )
+
+				if( r.length && (( "replaceState" in window.history ) || ( "pushState" in window.history )) )
 				this.replaceUrl(urlData.origin+p+this.urlSpliter+r);
 			} catch(e) {
 				this.log("Warn:", e);
 			}
 			// check for ajaxPage
-			eval("this.timer	= setInterval(function(){window['"+this.id+"'].urlCheck()},50);")
+			var controller = this;
+			this.timer = setInterval(function () {
+				controller.urlCheck();
+			}, 50);
 		};
 		this.replaceUrl	= function (url) {
-			window.history.replaceState({}, 'm-urlcapture-redirect', url);
+			debugger;
+			if ("pushState" in window.history) {
+				window.history.pushState({}, document.title, url);
+			} else {
+				window.history.replaceState({}, 'm-urlcapture-redirect', url);
+			}
 		};
 		this.stop	= function(){
 			var e;try{
@@ -260,7 +270,7 @@ window.m_urlcapture	= function(){
 			} catch(e){}
 		};
 		// assigning object to global vars
-			window[this.id]	= this;
+		// window[this.id]	= this;
 		return this;
 	};
 
@@ -268,67 +278,67 @@ window.m_urlcapture	= function(){
 /*
 		to create an urlController
 			var urlController	= new m_urlcapture();
-		
-		
+
+
 		to init it type:
 			urlController.start();
-		
+
 		to stop it type:
 			urlController.stop();
-		
+
 		to set an Default action for url Change
-		
+
 			urlController.set("ifNoAction",function(controller,action,param,data){
 				// data is an object .. ex: {url:"..string..",parts:[controller,action,param[0]...]}
 			})
-		
+
 		to enable/disable debug mode use ( default is disabled )
-		
+
 			urlController.set("debug",true);
-		
+
 		to set default Controller Name
 			urlController.set("defController","public");
-		
+
 		to set default action name
 			urlController.set("defAction","exec");
-		
+
 		to get params from object
-		
+
 			urlController.get("debug");		// to get debug state
 			urlController.get("defController");	// get default controller name
 			urlController.get("defAction");		// get default action name
 			urlController.get("urlHist");		// get History of URLS
 			urlController.get("ifNoAction");	// get function if no Action
-			
+
 			// geting id
 				var id = urlController.get("id");
-				
+
 				alert(window[id] == urlController) // it will return TRUE
-			
+
 			// geting an controller actions set
 				var controller_set = urlController.get("actions","controller_name");
-			
+
 			// geting an action function
 				var action_func = urlController.get("actions","controller_name","action_name");
-		
+
 		to clean actions list
 			urlController.set("actions",{act:"clean"});
-		
+
 		to clean actions from a specific controller
-		
+
 			urlController.set("actions",{
 						act		: "del-controller"
 						controller	: "controller_name"
 					});
-		
+
 		to delete an action
-		
+
 			urlController.set("actions",{
 						act		: "del-action",
 						controller	: "controller_name",
 						action		: "action_name"
 					});
-		
+
 		to add actions
 			urlController.set("actions",{
 						act	: "add",
@@ -343,16 +353,16 @@ window.m_urlcapture	= function(){
 							}
 						}
 					});
-		
+
 		updating function for onUrlChange and afterUrlChange
-		
+
 		urlController.set("onUrlChange",{
 			funct_1	: function(c,a,p,d){	// adding a function
 				...
 			},
 			funct_1	: null			// deleting a function
 		})
-		
+
 		urlController.set("afterUrlChange",{
 			... the same as for onUrlChange,
 			funct_1	: function(c,a,p,d){	// adding a function
@@ -361,7 +371,7 @@ window.m_urlcapture	= function(){
 				}
 			}
 		})
-		
-	
+
+
 	*/
 
