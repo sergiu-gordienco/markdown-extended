@@ -257,7 +257,6 @@ window.m_urlcapture	= function(){
 			}, 50);
 		};
 		this.replaceUrl	= function (url) {
-			debugger;
 			if ("pushState" in window.history) {
 				window.history.pushState({}, document.title, url);
 			} else {

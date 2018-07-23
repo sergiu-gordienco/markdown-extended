@@ -577,17 +577,16 @@
 				if (loaded) {
 					var err;
 					try {
-						clearTimeout(timer);
+						clearInterval(timer);
 					} catch (err) {
 						console.warn(err);
 					};
 					(f)(v || {});
 				}
 			};
-			var timer = setTimeout(function () {
+			var timer = setInterval(function () {
 				check();
 			}, 100);
-			check();
 		};
 	}
 	var urlController	= false;
